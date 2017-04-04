@@ -11,30 +11,34 @@
 /* ************************************************************************** */
 
 #include "../includes/fractol.h"
+#include <complex.h>
 
 static void	jescape(t_mlxdata *d, int i)
 {
-	double	ore;
-	double	oim;
-	int		iter;
-	double	nre;
-	double	nim;
+	// double complex	oz;
+	// double complex	nz;
 
-	nre = (i % WINX) / (double)(WINX / 2 / JX) - JX;
-	nim = (i / WINY) / (double)(WINY / 2 / JY) - JY;
+	double	ox;
+	double	oy;
+	int		iter;
+	double	nx;
+	double	ny;
+
+	// nz = CMPLX((i % WINX) / (double)(WINX / 2 / JX) - JX, (i / WINY) / (double)(WINY / 2 / JY) - JY);
+	nx = (i % WIN2X) / (double)(WIN2X) * d->xr + d->xo - d->xoff;
+	ny = -((i / WIN2X) / (double)(WIN2Y) * d->yr + d->yo - d->yoff);
 	iter = 0;
 	while (iter < MITER)
 	{
-		ore = nre;
-		oim = nim;
-		nre = ore * ore - oim * oim + JCRE;
-		nim = 2 * ore * oim + JCIM;
-		if (nre * nre + nim * nim > 4)
-		{
-			// ft_putnbr(iter);
-			// ft_putstr("\n\0");
+		ox = nx;
+		oy = ny;
+		// oz = nz;
+		// nz = cpow(oz, 2) + CMPLX(JCRE, JCIM);
+		nx = ox * ox - oy * oy + JCRE;
+		ny = 2 * ox * oy + JCIM;
+		if (nx * nx + ny * ny > 2)
+		// if (cabs(nz) > 4)
 			break;
-		}
 		iter++;
 	}
 	if (iter < MITER)
@@ -43,17 +47,12 @@ static void	jescape(t_mlxdata *d, int i)
 		*(d->imgd + i) = mlx_get_color_value(d->mlx, CR + CO);
 }
 
-void	julia(void)
+void	julia(t_mlxdata *d)
 {
-	t_mlxdata	*d;
 	int			i;
 
-	d = ft_mlxsetup();
 	i = 0;
-	while (i < WINX * WINY)
+	while (i < WIN2X * WIN2Y)
 		jescape(d, i++);
-	mlx_put_image_to_window(d->mlx, d->win, d->img, 0, 0);
-	mlx_hook(d->win, 2, 1, ft_kdown, (void*)d);
-	mlx_loop(d->mlx);
-	ft_putendl("Done!");
+	ft_putendl("Done drawing a julia fractal!");
 }

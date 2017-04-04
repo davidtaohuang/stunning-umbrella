@@ -18,7 +18,7 @@ static void	putusage(void)
 	ft_putendl_fd("Fractal type: Mandelbrot, Julia, or ???", 2);
 }
 
-static void	switchboard(int ac, char **av)
+static void	findtype(int ac, char **av, t_mlxdata *d)
 {
 	int		i;
 
@@ -28,15 +28,13 @@ static void	switchboard(int ac, char **av)
 		while (av[1][i])
 			ft_tolower(av[1][i++]);
 		if (!ft_strcmp(av[1], "julia"))
-		{
-			ft_putendl("Calculating julia fractal...");
-			julia();
-		}
+			d->type = 'j';
 		else if (!ft_strcmp(av[1], "mandelbrot"))
-		{
-			ft_putendl("Calculating mandelbrot fractal...");
-			mandelbrot();
-		}
+			d->type = 'm';
+		else if (!ft_strcmp(av[1], "newton"))
+			d->type = 'n';
+		else if (!ft_strcmp(av[1], "z"))
+			d->type = 'z';
 		else
 		{
 			ft_putendl_fd("Sorry, this fractal is not yet supported.", 2);
@@ -45,11 +43,33 @@ static void	switchboard(int ac, char **av)
 	}
 }
 
+void		mlxdraw(t_mlxdata *d)
+{
+	if (d->type == 'j')
+		julia(d);
+	else if (d->type == 'm')
+		mandelbrot(d);
+	else if (d->type == 'n')
+		newton(d);
+	else if (d->type == 'z')
+		ztest(d);
+	mlx_put_image_to_window(d->mlx, d->win, d->img, 0, 0);
+	mlx_hook(d->win, 2, 1, ft_kdown, (void*)d);
+	mlx_hook(d->win, 6, 1, ft_mmove, (void*)d);
+	mlx_hook(d->win, 5, 1, ft_mup, (void*)d);
+	mlx_hook(d->win, 4, 1, ft_mdown, (void*)d);
+	mlx_loop(d->mlx);
+}
+
 int			main(int ac, char **av)
 {
+	t_mlxdata	*d;
+
 	if (ac >= 2)
 	{
-		switchboard(ac, av);
+		d = mlxsetup();
+		findtype(ac, av, d);
+		mlxdraw(d);
 	}
 	else
 		putusage();

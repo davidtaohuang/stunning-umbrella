@@ -12,17 +12,24 @@
 
 #include "../includes/fractol.h"
 
-t_mlxdata	*ft_mlxsetup()
+t_mlxdata	*mlxsetup()
 {
-	t_mlxdata		*d;
+	t_mlxdata	*d;
 
 	d = (t_mlxdata*)ft_memalloc(sizeof(t_mlxdata));
 	d->mlx = mlx_init();
-	d->win = mlx_new_window(d->mlx, WINX, WINY, "fractol");
-	d->img = mlx_new_image(d->mlx, WINX, WINY);
+	d->win = mlx_new_window(d->mlx, WIN2X, WIN2Y, "fractol");
+	d->img = mlx_new_image(d->mlx, WIN2X, WIN2Y);
 	d->bbp = BBP;
 	d->line = LINE;
 	d->endian = ENDIAN;
+	// d->xoff = -(double)WINX;
+	// d->yoff = -(double)WINY;
+	d->xo = (TYPE == 'n' ? NXO : XO);
+	d->xr = (TYPE == 'n' ? NXR : XR);
+	d->yo = (TYPE == 'n' ? NYO : YO);
+	d->yr = (TYPE == 'n' ? NYR : YR);
+	d->zoom = ZOOM;
 	// d.mdown = 0;
 	// d.mbutton = 0;
 	// d.xp = 0;
