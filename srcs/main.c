@@ -18,7 +18,7 @@ static void	putusage(void)
 	ft_putendl_fd("Fractal type: Mandelbrot, Julia, or ???", 2);
 }
 
-static void	findtype(int ac, char **av, t_mlxdata *d)
+static void	findtype(int ac, char **av, t_fmeta *meta)
 {
 	int		i;
 
@@ -28,13 +28,11 @@ static void	findtype(int ac, char **av, t_mlxdata *d)
 		while (av[1][i])
 			ft_tolower(av[1][i++]);
 		if (!ft_strcmp(av[1], "julia"))
-			d->type = 'j';
+			meta->type = 'j';
 		else if (!ft_strcmp(av[1], "mandelbrot"))
-			d->type = 'm';
+			meta->type = 'm';
 		else if (!ft_strcmp(av[1], "newton"))
-			d->type = 'n';
-		else if (!ft_strcmp(av[1], "z"))
-			d->type = 'z';
+			meta->type = 'n';
 		else
 		{
 			ft_putendl_fd("Sorry, this fractal is not yet supported.", 2);
@@ -43,33 +41,68 @@ static void	findtype(int ac, char **av, t_mlxdata *d)
 	}
 }
 
-void		mlxdraw(t_mlxdata *d)
+// WHy not just assign the function pointers when I assigned the types?
+// 25 line limits for functions, brackets included and must take up an entire line by themselves. UGH.
+// Types are used later to save on redrawing.
+
+void		*fractalcalc(void *arg)
 {
-	if (d->type == 'j')
-		julia(d);
-	else if (d->type == 'm')
-		mandelbrot(d);
-	else if (d->type == 'n')
-		newton(d);
-	else if (d->type == 'z')
-		ztest(d);
-	mlx_put_image_to_window(d->mlx, d->win, d->img, 0, 0);
-	mlx_hook(d->win, 2, 1, ft_kdown, (void*)d);
-	mlx_hook(d->win, 6, 1, ft_mmove, (void*)d);
-	mlx_hook(d->win, 5, 1, ft_mup, (void*)d);
-	mlx_hook(d->win, 4, 1, ft_mdown, (void*)d);
-	mlx_loop(d->mlx);
+	t_thread	*data;
+	int			i;
+	int			end;
+	
+	data = (t_thread*)arg;
+	i = data->tid * CHUNK;
+	end = i + CHUNK;
+	while (i < end)
+		data->frac(data->d, i++);
+	pthread_exit(NULL);
+}
+
+void		mlxdraw(t_fmeta *meta)
+{
+	pthread_t	thr[THREAD_COUNT];
+	t_thread	tdata[THREAD_COUNT];
+	int			i;
+
+	i = 0;
+	while (i < THREAD_COUNT)
+	{
+		tdata[i].tid = i;
+		tdata[i].d = meta->d;
+		tdata[i].frac = meta->frac;
+		pthread_create(&thr[i], NULL, fractalcalc, &tdata[i]);
+		i++;
+	}
+	i = 0;
+	while (i < THREAD_COUNT)
+	{
+		pthread_join(thr[i], NULL);
+		i++;
+	}
+	mlx_put_image_to_window(meta->d->mlx, meta->d->win, meta->d->img, 0, 0);
+	mlx_hook(meta->d->win, 2, 1, ft_kdown, (void*)meta);
+	mlx_hook(meta->d->win, 6, 1, ft_mmove, (void*)meta);
+	// mlx_hook(meta->d->win, 5, 1, ft_mup, (void*)meta);
+	mlx_hook(meta->d->win, 4, 1, ft_mdown, (void*)meta);
+	mlx_loop(meta->d->mlx);
 }
 
 int			main(int ac, char **av)
 {
-	t_mlxdata	*d;
+	t_fmeta		meta;
 
 	if (ac >= 2)
 	{
-		d = mlxsetup();
-		findtype(ac, av, d);
-		mlxdraw(d);
+		meta.d = mlxsetup();
+		findtype(ac, av, &meta);
+		if (meta.type == 'j')
+			meta.frac = &julia;
+		else if (meta.type == 'm')
+			meta.frac = &mandelbrot;
+		else if (meta.type == 'n')
+			meta.frac = &newton;
+		mlxdraw(&meta);
 	}
 	else
 		putusage();

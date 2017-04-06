@@ -27,14 +27,18 @@ INCLUDES = -I includes/
 SRCFILES = 	main.c \
 			ft_mlx.c \
 			julia.c \
+			newton.c \
 			mandelbrot.c \
 			ft_khooks.c \
+			ft_mhooks.c \
 
 SRCDIR := srcs
 
 SRC:= $(addprefix $(SRCDIR)/, SRCFILES))
 
-LIB = libft/libft.a
+LFT = libft/libft.a
+
+LFTPRINTF = ft_printf/libftprintf.a
 
 MINILIB = minilibx_macos/libmlx.a
 
@@ -46,8 +50,11 @@ NAME = fractol
 
 all: $(NAME)
 
-$(LIB):
+$(LFT):
 		make -C libft/
+
+$(LFTPRINTF):
+		make -C ft_printf/
 
 $(MINILIB):
 		@echo "Creating $@..."
@@ -64,9 +71,9 @@ $(OBJDIR):
 		@echo "Creating subdirectory for object files..."
 		@mkdir $(OBJDIR)
 
-$(NAME): fractol.h $(OBJS) $(LIB) $(MINILIB)
+$(NAME): fractol.h $(OBJS) $(LFT) $(LFTPRINTF) $(MINILIB)
 		@echo "Creating $(NAME)..."
-		@$(CC) $(CFLAGS) $(GFLAGS) $(OBJS) -o $@ -L minilibx_macos/ -lmlx -L libft/ -lft
+		@$(CC) $(CFLAGS) $(GFLAGS) $(OBJS) -o $@ -L minilibx_macos/ -lmlx -L libft/ -lft -L ft_printf/ -lftprintf
 		@echo "All done!"
 
 clean:
@@ -74,11 +81,13 @@ clean:
 		@rm -f $(OBJS)
 		@rm -rf $(OBJDIR)
 		make clean -C libft/
+		make clean -C ft_printf/
 		@make clean -C minilibx_macos/
 
 fclean: clean
 		@echo "Deleting $(NAME)..."
 		@rm -f $(NAME)
 		make fclean -C libft/
+		make fclean -C ft_printf/
 
 re: fclean all

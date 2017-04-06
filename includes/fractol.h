@@ -15,12 +15,15 @@
 
 # include <math.h>
 # include <stdlib.h>
+# include <pthread.h>
 # include "../libft/includes/libft.h"
 # include "mlx.h"
 
+// The only reason why the meta struct exists for multi-threading basically,
+// and mainly because I wanted to simplify some of the organization.
+
 typedef struct	s_mlxdata
 {
-	char			type;
 	void			*mlx;
 	void			*win;
 	void			*img;
@@ -43,6 +46,7 @@ typedef struct	s_mlxdata
 	int				zoom;
 	double			dz;
 	char			lock;
+	unsigned int	miter;
 	// int				mdown;
 	// int				mbutton;
 	// int				xp;
@@ -51,12 +55,27 @@ typedef struct	s_mlxdata
 
 // dz is scale change, zoom change, for keeping relative position
 
+typedef struct	s_fmeta
+{
+	char			type;
+	t_mlxdata		*d;
+	void			(*frac)(t_mlxdata*, int);
+}				t_fmeta;
+
+typedef struct	s_thread
+{
+	int				tid;
+	t_mlxdata		*d;
+	void			(*frac)(t_mlxdata*, int);
+}				t_thread;
+
+# define THREAD_COUNT 16
 # define MITER 50
 # define WINY 400
 # define WINX 400
 # define WIN2Y 800
 # define WIN2X 800
-// # define JCI (iter + 1 - (log(2) / cabs(nz)) / log (2))
+# define CHUNK WIN2X * WIN2Y / THREAD_COUNT
 # define CI (iter + 1 - (log(2) / (nx * nx + ny * ny)) / log (2))
 # define TYPE d->type
 # define XO (double)-2
@@ -68,29 +87,23 @@ typedef struct	s_mlxdata
 # define NYO (double) -4
 # define NYR (double) 8
 # define ZOOM (double)100
-// # define JCRE (double)-0.7
-// # define JCIM (double)0.27015
 # define NTOL (double)0.00000001
 # define JCRE d->x
 # define JCIM d->y
-# define MCRE (i % WINX) / (double)(WINX / 2 / MX) - MX
-# define MCIM (i / WINY) / (double)(WINY / 2 / MY) - MY
 # define ENDIAN 0
 # define BBP 32
 # define LINE WIN2X * 4
 # define CR 0x0000FFFF
 # define CO 0x00FF0000
 
-int			ft_kdown(int key, t_mlxdata *d);
-int			ft_mmove(int x, int y, t_mlxdata *d);
-int			ft_mdown(int button, int x, int y, t_mlxdata *d);
-int			ft_mup(int button, int x, int y, t_mlxdata *d);
+int			ft_kdown(int key, t_fmeta *meta);
+int			ft_mmove(int x, int y, t_fmeta *meta);
+int			ft_mdown(int button, int x, int y, t_fmeta *meta);
+// int			ft_mup(int button, int x, int y, t_mlxdata *d);
 t_mlxdata	*mlxsetup();
-void		mlxdraw(t_mlxdata *d);
-void		julia(t_mlxdata *d);
-void		newton(t_mlxdata *d);
-
-void		ztest(t_mlxdata *d);
-void		mandelbrot(t_mlxdata *d);
+void		mlxdraw(t_fmeta *meta);
+void		julia(t_mlxdata *d, int i);
+void		newton(t_mlxdata *d, int i);
+void		mandelbrot(t_mlxdata *d, int i);
 
 #endif

@@ -23,23 +23,17 @@ t_mlxdata	*mlxsetup()
 	d->bbp = BBP;
 	d->line = LINE;
 	d->endian = ENDIAN;
-	// d->xoff = -(double)WINX;
-	// d->yoff = -(double)WINY;
-	d->xo = (TYPE == 'n' ? NXO : XO);
-	d->xr = (TYPE == 'n' ? NXR : XR);
-	d->yo = (TYPE == 'n' ? NYO : YO);
-	d->yr = (TYPE == 'n' ? NYR : YR);
+	d->xo = XO;
+	d->xr = XR;
+	d->yo = YO;
+	d->yr = YR;
 	d->zoom = ZOOM;
+	d->miter = MITER;
 	// d.mdown = 0;
 	// d.mbutton = 0;
 	// d.xp = 0;
 	// d.yp = 0;
-	d->imgd = (unsigned int*)mlx_get_data_addr(d->img, &(d->bbp), &(d->line), &(d->endian));
-	// ft_mlxprint(d);
-	// mlx_hook(d.win, 2, 1, ft_kdown, (void*)&d);
-	// mlx_hook(d.win, 6, 1, ft_drag, (void*)&d);
-	// mlx_hook(d.win, 5, 1, ft_mouseup, (void*)&d);
-	// mlx_hook(d.win, 4, 1, ft_mousedown, (void*)&d);
-	// mlx_loop(d.mlx);
+	d->imgd = (unsigned int*)mlx_get_data_addr(d->img, &(d->bbp), &(d->line),
+		&(d->endian));
 	return (d);
 }

@@ -20,44 +20,37 @@ void	ft_keyexit(t_mlxdata *d)
 	exit(1);
 }
 
-void	ft_keyzoom(int key, t_mlxdata *d)
+void	ft_keyzoom(int key, t_fmeta *meta)
 {
-	d->dz = d->zoom;
+	meta->d->dz = meta->d->zoom;
 	if (key == 6)
-		d->zoom = ZOOM;
+		meta->d->zoom = ZOOM;
 	if (key == 126)
-		d->zoom += 100;
+		meta->d->zoom += 10;
 	if (key == 125)
-		d->zoom -= 50;
-	if (d->zoom <= 0)
-		d->zoom = 10;
-	d->xoff -= (d->xm / (double)WIN2X * d->xr + d->xo);
-	d->yoff -= (d->ym / (double)WIN2Y * d->yr + d->yo);
-	d->xr = (TYPE == 'n' ? NXR : XR) / d->zoom * ZOOM;
-	d->yr = (TYPE == 'n' ? NYR : YR) / d->zoom * ZOOM;
-	d->xo = (TYPE == 'n' ? NXO : XO) / d->zoom * ZOOM;
-	d->yo = (TYPE == 'n' ? NYO : YO) / d->zoom * ZOOM;
-	d->xoff += (d->xm / (double)WIN2X * d->xr + d->xo);
-	d->yoff += (d->ym / (double)WIN2Y * d->yr + d->yo);
-	if (d->type == 'j' || d->type == 'z')
-	{
-		// d->x = d->xoff / (double)WINX * d->xr + d->xo;
-		// d->y = d->yoff / (double)WINY * d->yr + d->yo;
-		mlx_clear_window(d->mlx, d->win);
-		mlxdraw(d);
-	}
+		meta->d->zoom -= 10;
+	if (meta->d->zoom <= 0)
+		meta->d->zoom = 10;
+	meta->d->xoff -= (meta->d->xm / (double)WIN2X * meta->d->xr + meta->d->xo);
+	meta->d->yoff -= (meta->d->ym / (double)WIN2Y * meta->d->yr + meta->d->yo);
+	meta->d->xr = XR / meta->d->zoom * ZOOM;
+	meta->d->yr = YR / meta->d->zoom * ZOOM;
+	meta->d->xo = XO / meta->d->zoom * ZOOM;
+	meta->d->yo = YO / meta->d->zoom * ZOOM;
+	meta->d->xoff += (meta->d->xm / (double)WIN2X * meta->d->xr + meta->d->xo);
+	meta->d->yoff += (meta->d->ym / (double)WIN2Y * meta->d->yr + meta->d->yo);
+	mlx_clear_window(meta->d->mlx, meta->d->win);
+	mlxdraw(meta);
 }
 
-int		ft_kdown(int key, t_mlxdata *d)
+int		ft_kdown(int key, t_fmeta *meta)
 {
 	ft_putnbrnl(key);
 	if (key == 257)
-		d->lock = (!(d->lock) ? 1 : 0);
-	if (key == 12)
-		d->zoom = ZOOM;
+		meta->d->lock = (!(meta->d->lock) ? 1 : 0);
 	if ((key >= 125 && key <= 126) || key == 6)
-		ft_keyzoom(key, d);
+		ft_keyzoom(key, meta);
 	if (key == 53)
-		ft_keyexit(d);
+		ft_keyexit(meta->d);
 	return (0);
 }
