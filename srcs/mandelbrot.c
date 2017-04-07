@@ -12,6 +12,24 @@
 
 #include "../includes/fractol.h"
 
+/*
+**	Nx and ny stand for new x and new y respectively. X corresponds to
+**	the real component of the complex coordinate and y corresponds to the
+**	imaginary component of the complex coordinate. Ox and oy stand for old x
+**	old y respectively. The pixel coordinate values are obtained from the
+**	iterator variable by normalizing against the x-dimension of the
+**	image/window. It is then tranformated to a coordinate in the complex plane
+**	using the image/window size, range variable, offset variable, and zoom
+**	offset variable (d->xr = range, d->xo = offset, d->xoff = zoom offset).
+**
+**	In the while loop, nx and ny are updated according to the formula defining
+**	the fractal until either the maximum number of iterations is reached or the
+**	escape/boundary condition is reached. The number of iterations is then
+**	scaled against the color range (with option for a smoothing function) and
+**	added to the color offset. This value is assigned at that specific pixel
+**	in the image data address.
+*/
+
 void	mandelbrot(t_mlxdata *d, int i)
 {
 	double			ox;
@@ -34,8 +52,8 @@ void	mandelbrot(t_mlxdata *d, int i)
 		iter++;
 	}
 	if (iter < d->miter)
-		*(d->imgd + i) = mlx_get_color_value(d->mlx, (unsigned int)(CR * (CI
-			/ (double)MITER) + CO));
+		*(d->imgd + i) = mlx_get_color_value(d->mlx, (unsigned int)(CR *
+			(double)(CSMOOTH ? CS : CI) / d->miter) + CO);
 	else
 		*(d->imgd + i) = mlx_get_color_value(d->mlx, CR + CO);
 }
