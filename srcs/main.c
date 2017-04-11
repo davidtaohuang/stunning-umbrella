@@ -85,6 +85,7 @@ void				instructions(void)
 	ft_printf("SCROLL WHEEL = zoom in/out on the mouse pointer\n");
 	ft_printf("UP/DOWN ARROW = zoom in/out on the mouse pointer\n");
 	ft_printf("Z = reset zoom level\n");
+	ft_printf("+/- = increase/decrease maximum iterations\n");
 	ft_printf("TAB = show number of maximum iterations and zoom level\n");
 	ft_printf("ESC = exit\n\n");
 	ft_printf("Julia-specific instructions:\n\n");
