@@ -71,7 +71,7 @@ $(OBJDIR):
 		@echo "Creating subdirectory for object files..."
 		@mkdir $(OBJDIR)
 
-$(NAME): fractol.h $(OBJS) $(LFT) $(LFTPRINTF) $(MINILIB)
+$(NAME): $(OBJS) $(LFT) $(LFTPRINTF) $(MINILIB)
 		@echo "Creating $(NAME)..."
 		@$(CC) $(CFLAGS) $(GFLAGS) $(OBJS) -o $@ -L minilibx_macos/ -lmlx -L libft/ -lft -L ft_printf/ -lftprintf
 		@echo "All done!"
@@ -82,12 +82,12 @@ clean:
 		@rm -rf $(OBJDIR)
 		make clean -C libft/
 		make clean -C ft_printf/
-		@make clean -C minilibx_macos/
 
 fclean: clean
 		@echo "Deleting $(NAME)..."
 		@rm -f $(NAME)
 		make fclean -C libft/
 		make fclean -C ft_printf/
+		@make clean -C minilibx_macos/
 
 re: fclean all
