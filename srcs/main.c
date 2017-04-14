@@ -24,9 +24,9 @@ static void			findtype(char **av, t_fmeta *meta)
 {
 	int		i;
 
-	i = 0;
-	while (av[1][i])
-		ft_tolower(av[1][i++]);
+	i = -1;
+	while (av[1][++i])
+		av[1][i] = ft_tolower(av[1][i]);
 	if (!ft_strcmp(av[1], "julia"))
 	{
 		meta->type = 'j';
