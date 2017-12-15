@@ -3,17 +3,17 @@ A fractal visualizer for Julia, Mandelbrot, and Newton fractals built using C an
 
 ## Demo
 
-Julia fractal
+Julia Fractal
 
 ![julia demo gif](demo/juliademo.gif?raw=true "Julia Fractal Demo")
 
-Mandelbrot fractal
+Mandelbrot Fractal
 
-![mandelbrot demo](demo/mandelbrotdemo.png? "Mandelbrot Fractal Demo)
+<img src="demo/mandelbrotdemo.png" alt="Mandelbrot fractal demo" width="384px"/>
 
-Newton fractal
+Newton Fractal
 
-![newton demo](demo/newtondemo.png? "Newton Fractal Demo)
+<img src="demo/newtondemo.png" alt="Newton fractal demo" width="384px"/>
 
 ## Installation
 
